@@ -2,7 +2,10 @@
 # _*_ coding:utf-8 _*_
 
 import sys
-import xlrd
+try:
+    import xlrd
+except:
+    print('need xlrd package, try \'pip3 install xlrd\' to install')
 
 
 def usage():
@@ -78,13 +81,25 @@ def xls_to_info(filenames):
 
 
 def info_to_dict(filenames):
+    """
+    Input:
+        Tuple:
+            (name, target, ct, tm)
+    output:
+        Dict:
+            {name:
+                    {target:[[ct1, ct2...], [tm1, tm2...]]}
+            }
+    """
     res_dict = {}
+
     if filenames[0].endswith('.xls'):
         info_generator = xls_to_info(filenames)
     elif filenames[0].endswith('.txt'):
         info_generator = txt_to_info(filenames)
     else:
         print('Error, file format not supported!')
+
     for i_name, i_target, i_ct, i_tm in info_generator:
         if i_name not in res_dict:
             res_dict[i_name] = {i_target: [[i_ct, ], [i_tm, ]]}
@@ -116,7 +131,7 @@ def makejudge(dic):
             for target, [cts, tms] in sorted(parameters.items()):
                 target_str += target
                 for ct in cts:
-                    if float(ct) < 30:
+                    if 16 < float(ct) < 30:
                         result_str += '+'
                         success += 0.5
                     else:
